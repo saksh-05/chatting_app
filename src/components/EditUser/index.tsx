@@ -17,7 +17,7 @@ import axios from "axios";
 const EditUser = () => {
   const history = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
-  const url = "https://auth-app-2abcb-default-rtdb.firebaseio.com/";
+  const url = `https://auth-app-2abcb-default-rtdb.firebaseio.com/`;
   const UserSchema = Yup.object().shape({
     name: Yup.string().max(30, "Too Long"),
     bio: Yup.string().max(50, "Too Long"),
