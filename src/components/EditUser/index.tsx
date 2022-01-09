@@ -116,6 +116,11 @@ const EditUser = () => {
             Changes will be reflected to every services
           </h5>
         </div>
+        {/* photo: values.photo,
+                  name: values.name,
+                  bio: values.bio,
+                  phone: values.phone,
+                  password: values.password, */}
 
         <Formik
           initialValues={{
@@ -134,11 +139,7 @@ const EditUser = () => {
               .put(
                 url,
                 {
-                  photo: values.photo,
-                  name: values.name,
-                  bio: values.bio,
-                  phone: values.phone,
-                  password: values.password,
+                  values
                 },
                 {
                   headers: {
