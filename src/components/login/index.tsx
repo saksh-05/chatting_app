@@ -5,7 +5,7 @@ import {
   AuthProvider,
   GithubAuthProvider,
   FacebookAuthProvider,
-  signOut,
+  // signOut,
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { FirebaseError } from "firebase/app";
@@ -88,10 +88,10 @@ const Login = () => {
         });
     }
   };
-  const handleSignOut = async () => {
-    console.log(auth.currentUser);
-    await signOut(auth);
-  };
+  // const handleSignOut = async () => {
+  //   console.log(auth.currentUser);
+  //   await signOut(auth);
+  // };
 
   useEffect(() => {});
 
