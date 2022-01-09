@@ -134,7 +134,11 @@ const EditUser = () => {
               .put(
                 url,
                 {
-                  values,
+                  photo: values.photo,
+                  name: values.name,
+                  bio: values.bio,
+                  phone: values.phone,
+                  password: values.password,
                 },
                 {
                   headers: {
