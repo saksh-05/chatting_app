@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useEffect, useState } from "react";
+import React, { SyntheticEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   GoogleAuthProvider,
@@ -75,7 +75,6 @@ const Login = () => {
       await signInWithEmailAndPassword(auth, login.email, login.password)
         .then((res) => {
           history("/main");
-
           console.log(res);
         })
         .catch((err) => {
@@ -92,8 +91,6 @@ const Login = () => {
   //   console.log(auth.currentUser);
   //   await signOut(auth);
   // };
-
-  useEffect(() => {});
 
   return (
     <>

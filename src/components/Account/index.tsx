@@ -3,6 +3,10 @@ import { auth } from "config/firebase-config";
 import { useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { Navbar, Profile, Userdetail, Dropdown, Specialdiv } from "./styled";
+import { useSelector } from "react-redux";
+import { RootState } from "redux/reducers";
+import { useAppDispatch } from "redux/store";
+import { updateUser } from "redux/actions";
 import devChallenge from "../../resources/devchallenges-light.svg";
 import arrow from "../../resources/arrow.svg";
 import account from "../../resources/account.svg";
@@ -10,12 +14,18 @@ import signout from "../../resources/signout.svg";
 import chat from "../../resources/chat.svg";
 
 const Account = () => {
+  const dispatch = useAppDispatch();
+  const updatedUser = useSelector((state: RootState) => state.updateUserItem);
   const history = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
-  const inName =
-    auth.currentUser?.displayName != null ? auth.currentUser.displayName : "A";
+  console.log(updatedUser);
+  const [userData, setUserData] = useState({
+    imageUrl: updatedUser.photo,
+    name: updatedUser.name,
+    bio: updatedUser.bio,
+    phone: updatedUser.phone,
+  });
 
-  // const;
   return (
     <div style={{ color: "#fff" }}>
       {showDropdown ? (
@@ -41,6 +51,17 @@ const Account = () => {
             <li
               style={{ color: "#EB5757" }}
               onClick={async () => {
+                setUserData({
+                  name: "",
+                  bio: "",
+                  phone: 0,
+                  imageUrl: "",
+                });
+                dispatch(
+                  updateUser({
+                    userData,
+                  })
+                );
                 await signOut(auth);
                 history("/");
               }}
@@ -70,8 +91,12 @@ const Account = () => {
           <div style={{ alignItems: "center", display: "flex" }}>
             <img
               src={
-                auth.currentUser?.photoURL == null
-                  ? inName[0]
+                userData.imageUrl
+                  ? userData.imageUrl
+                  : auth.currentUser === undefined ||
+                    auth.currentUser?.photoURL == null ||
+                    auth.currentUser == null
+                  ? "DEV"
                   : auth.currentUser?.photoURL
               }
               alt="profile"
@@ -83,7 +108,7 @@ const Account = () => {
               }}
             />
           </div>
-          {auth.currentUser?.displayName}
+          {userData.name ? userData.name : auth.currentUser?.displayName}
           <div
             style={{ display: "flex", cursor: "pointer" }}
             onClick={() => setShowDropdown(!showDropdown)}
@@ -154,13 +179,16 @@ const Account = () => {
               <Specialdiv>
                 <img
                   src={
-                    auth.currentUser?.photoURL == null
-                      ? inName[0]
+                    userData.imageUrl
+                      ? userData.imageUrl
+                      : auth.currentUser?.photoURL == null
+                      ? "DEV"
                       : auth.currentUser?.photoURL
                   }
                   alt="user"
                   style={{
                     borderRadius: "0.5rem",
+                    height: "100px",
                   }}
                 />
               </Specialdiv>
@@ -169,13 +197,15 @@ const Account = () => {
           <tr>
             <td>
               <h5>Name</h5>
-              <Specialdiv>{auth.currentUser?.displayName}</Specialdiv>
+              <Specialdiv>
+                {userData.name ? userData.name : auth.currentUser?.displayName}
+              </Specialdiv>
             </td>
           </tr>
           <tr>
             <td>
               <h5>Bio</h5>
-              <Specialdiv>null</Specialdiv>
+              <Specialdiv>{userData.bio ? userData.bio : "null"}</Specialdiv>
             </td>
           </tr>
           <tr>
@@ -188,8 +218,10 @@ const Account = () => {
             <td>
               <h5>Phone</h5>
               <Specialdiv>
-                {auth.currentUser?.phoneNumber == null
-                  ? "null"
+                {userData.phone
+                  ? userData.phone
+                  : auth.currentUser?.phoneNumber == null
+                  ? "not specified"
                   : auth.currentUser?.phoneNumber}
               </Specialdiv>
             </td>

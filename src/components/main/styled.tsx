@@ -56,3 +56,10 @@ export const Dropdown = styled.div`
     }
   }
 `;
+
+export const Add = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  justify-content: space-between;
+`;
