@@ -1,7 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { auth } from "config/firebase-config";
 import { useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
+import {
+  getFirestore,
+  getDocs,
+  collection,
+  getDoc,
+  doc,
+} from "firebase/firestore";
 import { Navbar, Profile, Userdetail, Dropdown, Specialdiv } from "./styled";
 import { useSelector } from "react-redux";
 import { RootState } from "redux/reducers";
@@ -18,6 +25,7 @@ const Account = () => {
   const updatedUser = useSelector((state: RootState) => state.updateUserItem);
   const history = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showLoading, setShowLoading] = useState(true);
   console.log(updatedUser);
   const [userData, setUserData] = useState({
     imageUrl: updatedUser.photo,
@@ -25,6 +33,68 @@ const Account = () => {
     bio: updatedUser.bio,
     phone: updatedUser.phone,
   });
+
+  useEffect(() => {
+    const getUserData = async () => {
+      const db = getFirestore();
+      const userId = auth.currentUser?.uid;
+      // console.log(userId);
+      try {
+        const userSnap = await getDoc(doc(db, "users", `${userId}`));
+        if (userSnap.exists()) {
+          setUserData({
+            imageUrl: userSnap.data().photo,
+            name: userSnap.data().name,
+            bio: userSnap.data().bio,
+            phone: userSnap.data().phone,
+          });
+          dispatch(
+            updateUser({
+              imageUrl: userSnap.data().photo,
+              name: userSnap.data().name,
+              bio: userSnap.data().bio,
+              phone: userSnap.data().phone,
+            })
+          );
+          console.log(updatedUser);
+        }
+
+        setShowLoading(false);
+
+        // console.log(userSnap);
+      } catch (err) {
+        console.log(err);
+      }
+      // await onValue(ref(db, "users/" + userId), (snap) => {
+      //   console.log(snap.val());
+      //   const val = snap.val();
+      //   if (val != null) {
+      //     setUserData({
+      //       imageUrl: val.photo,
+      //       name: val.name,
+      //       bio: val.bio,
+      //       phone: val.phone,
+      //     });
+      //     dispatch(
+      //       updateUser({
+      //         imageUrl: val.photo,
+      //         name: val.name,
+      //         bio: val.bio,
+      //         phone: val.phone,
+      //       })
+      //     );
+      //     console.log(updatedUser);
+      //   }
+      //   setShowLoading(false);
+      // });
+    };
+    // const getAllChannels = async () => {
+    //   const db = getDatabase();
+    //   const channelsRef = doc(db, "channels");
+    // };
+    getUserData();
+    // getAllChannels();
+  }, []);
 
   return (
     <div style={{ color: "#fff" }}>

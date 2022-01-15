@@ -4,7 +4,7 @@ import { Container, Back, Dropdown, Navbar } from "./styled";
 import { useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { auth } from "config/firebase-config";
-import { set, ref, getDatabase } from "firebase/database";
+// import { set, ref, getDatabase } from "firebase/database";
 import devChallenge from "../../resources/devchallenges-light.svg";
 import arrow from "../../resources/arrow.svg";
 import backarrow from "../../resources/back-arrow.svg";
@@ -18,7 +18,7 @@ import { useSelector } from "react-redux";
 import { useAppDispatch } from "redux/store";
 import { updateUser } from "redux/actions";
 import * as Yup from "yup";
-import { addDoc, collection, getFirestore } from "firebase/firestore";
+import { getFirestore, setDoc, doc } from "firebase/firestore";
 
 const EditUser = () => {
   const dispatch = useAppDispatch();
@@ -177,7 +177,10 @@ const EditUser = () => {
                 const userId = auth.currentUser?.uid;
                 setShowLoading(true);
                 try {
-                  const userRef = await addDoc(collection(db, "users"), values);
+                  const userRef = await setDoc(
+                    doc(db, "users", `${userId}`),
+                    values
+                  );
                   console.log(userRef);
                   history("/profile");
                 } catch (error) {

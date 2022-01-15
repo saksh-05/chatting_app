@@ -16,6 +16,7 @@ import chat from "../../resources/chat.svg";
 import profile from "../../resources/profile.svg";
 import LoadingScreen from "components/LoadingScreen";
 import AddChannel from "components/AddChannel";
+import AllChannels from "components/AllChannels";
 
 const Main = () => {
   const dispatch = useAppDispatch();
@@ -34,24 +35,27 @@ const Main = () => {
     const getUserData = async () => {
       const db = getFirestore();
       const userId = auth.currentUser?.uid;
-      console.log(userId);
+      // console.log(userId);
       try {
         const userSnap = await getDocs(collection(db, "users"));
         userSnap.forEach((doc) => {
-          setUserData({
-            imageUrl: doc.data().photo,
-            name: doc.data().name,
-            bio: doc.data().bio,
-            phone: doc.data().phone,
-          });
-          dispatch(
-            updateUser({
+          console.log(doc.id);
+          if (doc.id === userId) {
+            setUserData({
               imageUrl: doc.data().photo,
               name: doc.data().name,
               bio: doc.data().bio,
               phone: doc.data().phone,
-            })
-          );
+            });
+            dispatch(
+              updateUser({
+                imageUrl: doc.data().photo,
+                name: doc.data().name,
+                bio: doc.data().bio,
+                phone: doc.data().phone,
+              })
+            );
+          }
           console.log(updatedUser);
         });
         setShowLoading(false);
@@ -144,6 +148,7 @@ const Main = () => {
                 +
               </div>
             </Add>
+            <AllChannels />
             {showDropdown ? (
               <Dropdown>
                 <ul>

@@ -63,3 +63,4 @@ export const Add = styled.div`
   padding: 0 1rem;
   justify-content: space-between;
 `;
+
