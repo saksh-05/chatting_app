@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { auth } from "config/firebase-config";
 import { signOut } from "firebase/auth";
 // import { getDatabase, ref, onValue } from "firebase/database";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { Channels, Chats, Profile, Dropdown, Add } from "./styled";
 import { useSelector } from "react-redux";
@@ -37,27 +37,44 @@ const Main = () => {
       const userId = auth.currentUser?.uid;
       // console.log(userId);
       try {
-        const userSnap = await getDocs(collection(db, "users"));
-        userSnap.forEach((doc) => {
-          console.log(doc.id);
-          if (doc.id === userId) {
-            setUserData({
-              imageUrl: doc.data().photo,
-              name: doc.data().name,
-              bio: doc.data().bio,
-              phone: doc.data().phone,
-            });
-            dispatch(
-              updateUser({
-                imageUrl: doc.data().photo,
-                name: doc.data().name,
-                bio: doc.data().bio,
-                phone: doc.data().phone,
-              })
-            );
-          }
-          console.log(updatedUser);
-        });
+        const userSnap = await getDoc(doc(db, "users", `${userId}`));
+        console.log(userSnap);
+        if (userSnap.exists()) {
+          setUserData({
+            imageUrl: userSnap.data().photo,
+            name: userSnap.data().name,
+            bio: userSnap.data().bio,
+            phone: userSnap.data().phone,
+          });
+          dispatch(
+            updateUser({
+              imageUrl: userSnap.data().photo,
+              name: userSnap.data().name,
+              bio: userSnap.data().bio,
+              phone: userSnap.data().phone,
+            })
+          );
+        }
+        // userSnap.forEach((doc) => {
+        //   console.log(doc.id);
+        //   if (doc.id === userId) {
+        //     setUserData({
+        //       imageUrl: doc.data().photo,
+        //       name: doc.data().name,
+        //       bio: doc.data().bio,
+        //       phone: doc.data().phone,
+        //     });
+        //     dispatch(
+        //       updateUser({
+        //         imageUrl: doc.data().photo,
+        //         name: doc.data().name,
+        //         bio: doc.data().bio,
+        //         phone: doc.data().phone,
+        //       })
+        //     );
+        //   }
+        //   console.log(updatedUser);
+        // });
         setShowLoading(false);
 
         // console.log(userSnap);

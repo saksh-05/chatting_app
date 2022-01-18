@@ -1,1 +1,1 @@
-export {updateUser} from 'redux/slices/updateItem';
+export {updateUser, updateChannels} from 'redux/slices/updateItem';

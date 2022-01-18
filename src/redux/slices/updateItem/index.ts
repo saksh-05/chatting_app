@@ -25,9 +25,12 @@ const updateUserSlice = createSlice({
       state.phone = action.payload.phone;
       state.photo = action.payload.imageUrl;
     },
+    updateChannels:(state,action)=>{
+      console.log(action.payload);
+    }
   },
 });
 
-export const { updateUser } = updateUserSlice.actions;
+export const { updateUser,updateChannels } = updateUserSlice.actions;
 
 export default updateUserSlice.reducer;

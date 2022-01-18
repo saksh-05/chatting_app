@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const Channels = styled.div`
+export const Channel = styled.div`
   background: #120f13;
   color: white;
   height: 100%;
@@ -13,6 +13,10 @@ export const Chats = styled.div`
   width: 70%;
   position: relative;
   margin-left: auto;
+  font-size: 1.3rem;
+  font-weight: 600;
+  padding-top: 1rem;
+  padding-bottom: 5rem;
 `;
 
 export const Profile = styled.div`
@@ -57,9 +61,13 @@ export const Dropdown = styled.div`
   }
 `;
 
-export const Add = styled.div`
+export const ChName = styled.div`
+  font-size: 1.2rem;
+  font-weight: 600;
+`;
+export const ChDesc = styled.div``;
+
+export const Messages = styled.div`
   display: flex;
-  align-items: center;
-  padding: 0 2rem;
-  justify-content: space-between;
+  margin-bottom: 1.5rem;
 `;
