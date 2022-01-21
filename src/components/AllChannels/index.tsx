@@ -6,6 +6,7 @@ import {
   getFirestore,
   orderBy,
   query,
+  onSnapshot,
 } from "firebase/firestore";
 import { useAppDispatch } from "redux/store";
 import { updateChannels } from "redux/actions";
@@ -28,27 +29,31 @@ const AllChannels = () => {
   useEffect(() => {
     const getAllChannels = async () => {
       const db = getFirestore();
-      const channelSnap = await getDocs(collection(db, "channels"));
-      console.log(channelSnap);
-      channelSnap.forEach((doc) => {
-        console.log(doc.id);
-        setChannels((chnl) => [
-          ...chnl,
-          {
-            id: doc.id,
-            channelData: {
-              name: doc.data().name,
-              description: doc.data().description,
-            },
-          },
-        ]);
-      });
-      //   dispatch(
-      //     updateChannels({
-      //       channels,
-      //     })
-      //   );
+      await onSnapshot(
+        query(collection(db, "channels"), orderBy("createdAt")),
+        (onSnap) => {
+          onSnap.docChanges().forEach((change) => {
+            if (change.type === "added") {
+              setChannels((cht) => [
+                ...cht,
+                {
+                  id: change.doc.id,
+                  channelData: {
+                    name: change.doc.data().name,
+                    description: change.doc.data().description,
+                  },
+                },
+              ]);
+            }
+          });
+        }
+      );
     };
+    //   dispatch(
+    //     updateChannels({
+    //       channels,
+    //     })
+    //   );
 
     getAllChannels();
   }, []);

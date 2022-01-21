@@ -24,10 +24,11 @@ export const Profile = styled.div`
   align-items: center;
   height: 5rem;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   position: absolute;
   bottom: 0;
-  width: 100%;
+  padding: 0 2rem;
+  width: 80%;
 `;
 
 export const Dropdown = styled.div`
@@ -70,4 +71,12 @@ export const ChDesc = styled.div``;
 export const Messages = styled.div`
   display: flex;
   margin-bottom: 1.5rem;
+`;
+
+export const UniqueUsers = styled.div`
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  font-family: "Noto Sans Display";
 `;

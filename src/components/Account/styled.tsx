@@ -16,6 +16,7 @@ export const Profile = styled.div`
   width: 60%;
   margin: auto;
   margin-top: 2rem;
+  margin-bottom: 4rem;
 `;
 
 export const Userdetail = styled.table`

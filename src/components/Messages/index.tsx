@@ -1,13 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ChatMessage } from "./styled";
 import send from "../../resources/send.svg";
-import {
-  getFirestore,
-  setDoc,
-  doc,
-  collection,
-  addDoc,
-} from "firebase/firestore";
+import { getFirestore, collection, addDoc } from "firebase/firestore";
 import { auth } from "config/firebase-config";
 import { useSelector } from "react-redux";
 import { RootState } from "redux/reducers";
@@ -27,19 +21,22 @@ const UserMessages = (props: any) => {
         {
           chat: message,
           createdAt: new Date(),
-          id: uid,
+          uId: uid,
           imageUrl: `${
             updatedUser.photo ? updatedUser.photo : auth.currentUser?.photoURL
+          }`,
+          name: `${
+            updatedUser.name ? updatedUser.name : auth.currentUser?.displayName
           }`,
         }
       );
       console.log(messageRef);
+      setMessage("");
       console.log("completed");
     } catch (err) {
       console.log(err);
     }
   };
-  useEffect(() => {}, []);
   return (
     <ChatMessage>
       {/* <input type="text" maxLength={180} /> */}

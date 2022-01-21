@@ -49,6 +49,7 @@ export const Container = styled.div`
   border: 1px solid white;
   border-radius: 0.5rem;
   padding: 2rem;
+  margin-bottom: 4rem;
   label {
     display: block;
   }

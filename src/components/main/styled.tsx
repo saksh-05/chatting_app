@@ -20,10 +20,11 @@ export const Profile = styled.div`
   align-items: center;
   height: 5rem;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   position: absolute;
   bottom: 0;
-  width: 100%;
+  padding: 0 2rem;
+  width: 80%;
 `;
 
 export const Dropdown = styled.div`
@@ -62,4 +63,9 @@ export const Add = styled.div`
   align-items: center;
   padding: 0 2rem;
   justify-content: space-between;
+`;
+
+export const Messages = styled.div`
+  display: flex;
+  margin-bottom: 1.5rem;
 `;

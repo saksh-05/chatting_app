@@ -34,4 +34,5 @@ export const Button = styled.div`
   justify-content: center;
   font-weight: 600;
   font-size: smaller;
+  cursor: pointer;
 `;

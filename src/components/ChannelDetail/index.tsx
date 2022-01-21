@@ -10,10 +10,11 @@ import {
   ChName,
   ChDesc,
   Messages,
+  UniqueUsers,
 } from "./styled";
 import { useSelector } from "react-redux";
 import { RootState } from "redux/reducers";
-import { updateUser } from "redux/actions";
+import { updateUser, updateChannels } from "redux/actions";
 import { useAppDispatch } from "redux/store";
 import leftArrow from "../../resources/left-arrow.svg";
 import account from "../../resources/account.svg";
@@ -37,6 +38,7 @@ const ChannelDetail = () => {
   const history = useNavigate();
   const dispatch = useAppDispatch();
   const updatedUser = useSelector((state: RootState) => state.updateUserItem);
+  console.log("updatedUser", updatedUser);
   const [showDropdown, setShowDropdown] = useState(false);
   const [userData, setUserData] = useState({
     imageUrl: updatedUser.photo,
@@ -52,17 +54,29 @@ const ChannelDetail = () => {
         createdAt: "",
         imageUrl: "",
         uId: "",
+        name: "",
       },
     },
   ]);
+  const allDates = chats.map((cht) =>
+    new Date(cht.chatData.createdAt).toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    })
+  );
+  const uniqueDates = [...Array.from(new Set(allDates))];
+
+  const uniqueUsers = [
+    ...Array.from(
+      chats
+        .reduce((map, obj) => map.set(obj.chatData.uId, obj), new Map())
+        .values()
+    ),
+  ];
+  console.log(uniqueUsers);
   const val = location.state as any;
   console.log(location);
-
-  function idExists(id: string) {
-    const idexists = chats.find((chat) => chat.id === id);
-    console.log(idexists);
-    return idexists;
-  }
 
   useEffect(() => {
     const getChats = async () => {
@@ -73,81 +87,51 @@ const ChannelDetail = () => {
           orderBy("createdAt")
         ),
         (onSnap) => {
-          onSnap.forEach((doc) => {
-            console.log(chats);
-            console.log(doc.id);
-            if (doc.id && !idExists(doc.id)) {
-              console.log(doc.id);
-              chats.push({
-                id: doc.id,
-                chatData: {
-                  chat: doc.data().chat,
-                  createdAt: new Date(
-                    doc.data().createdAt.seconds * 1000
-                  ).toISOString(),
-                  imageUrl: doc.data().imageUrl,
-                  uId: doc.data().id,
+          onSnap.docChanges().forEach((change) => {
+            console.log(change.doc.id);
+            console.log(change.doc.data().uId);
+            if (change.type === "added") {
+              setChats((cht) => [
+                ...cht,
+                {
+                  id: change.doc.id,
+                  chatData: {
+                    chat: change.doc.data().chat,
+                    createdAt: new Date(
+                      change.doc.data().createdAt.seconds * 1000
+                    ).toISOString(),
+                    imageUrl: change.doc.data().imageUrl,
+                    uId: change.doc.data().uId,
+                    name: change.doc.data().name,
+                  },
                 },
-              });
-              // setChats({
-              //   chats: [
-              //     ...chats,
-              //     {
-              //       id: doc.id,
-              //       chatData: {
-              //         chat: doc.data().chat,
-              //         createdAt: new Date(
-              //           doc.data().createdAt.seconds * 1000
-              //         ).toISOString(),
-              //         imageUrl: doc.data().imageUrl,
-              //         uId: doc.data().id,
-              //       },
-              //     },
-              //   ],
-              //   //   [
-              //   //   ...cht,
-              //   //   {
-              //   //     id: doc.id,
-              //   //     chatData: {
-              //   //       chat: doc.data().chat,
-              //   //       createdAt: new Date(
-              //   //         doc.data().createdAt.seconds * 1000
-              //   //       ).toISOString(),
-              //   //       imageUrl: doc.data().imageUrl,
-              //   //       uId: doc.data().id,
-              //   //     },
-              //   //   },
-              //   // ]
-              // });
+              ]);
+              dispatch(
+                updateChannels({
+                  channelId: val.id,
+                  id: change.doc.id,
+                  chatData: {
+                    chat: change.doc.data().chat,
+                    createdAt: new Date(
+                      change.doc.data().createdAt.seconds * 1000
+                    ).toISOString(),
+                    imageUrl: change.doc.data().imageUrl,
+                    uId: change.doc.data().uId,
+                    name: change.doc.data().name,
+                  },
+                })
+              );
             }
           });
         }
       );
-      // chatCollectionSnap.forEach((doc) => {
-      //   console.log(doc.data());
-      //   setChats((cht) => [
-      //     ...cht,
-      //     {
-      //       id: doc.id,
-      //       chatData: {
-      //         chat: doc.data().chat,
-      //         createdAt: new Date(
-      //           doc.data().createdAt.seconds * 1000
-      //         ).toISOString(),
-      //         imageUrl: doc.data().imageUrl,
-      //         uId: doc.data().id,
-      //       },
-      //     },
-      //   ]);
-      // });
     };
 
     getChats();
-  }, [chats.length]);
+  }, [val.id]);
   return (
     <>
       <Channel>
-        {/* {console.log(chats)} */}
         <div
           style={{
             display: "flex",
@@ -155,7 +139,7 @@ const ChannelDetail = () => {
             padding: "2rem 1.3rem",
             fontSize: "1.2rem",
             fontWeight: "600",
-            fontFamily: "Noto Sans",
+            fontFamily: "Noto Sans Display",
             paddingTop: "1rem",
           }}
         >
@@ -163,7 +147,12 @@ const ChannelDetail = () => {
             src={leftArrow}
             alt="back arrow"
             height={32}
-            style={{ marginRight: "1rem" }}
+            style={{ marginRight: "1rem", cursor: "pointer" }}
+            onClick={() =>
+              history("/allchannels", {
+                state: val.channelData.name,
+              })
+            }
           />
           All Channels
         </div>
@@ -175,6 +164,36 @@ const ChannelDetail = () => {
           </ChName>
           <ChDesc>{val.channelData.description}</ChDesc>
         </div>
+        <UniqueUsers>
+          Members
+          {uniqueUsers.map((user) => {
+            if (user.id) {
+              return (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    fontWeight: "400",
+                    marginTop: "1rem",
+                  }}
+                >
+                  <img
+                    style={{
+                      height: "48px",
+                      width: "48px",
+                      borderRadius: "0.5rem",
+                      marginRight: "0.8rem",
+                    }}
+                    src={user.chatData.imageUrl}
+                    alt="user profile"
+                  />
+                  {user.chatData.name}
+                </div>
+              );
+            }
+            return <></>;
+          })}
+        </UniqueUsers>
         {showDropdown ? (
           <Dropdown>
             <ul>
@@ -186,7 +205,13 @@ const ChannelDetail = () => {
                 />
                 Profile
               </li>
-              <li onClick={() => history("/allchannels")}>
+              <li
+                onClick={() =>
+                  history("/allchannels", {
+                    state: val.channelData.name,
+                  })
+                }
+              >
                 <img
                   src={chat}
                   alt="group chat"
@@ -256,123 +281,171 @@ const ChannelDetail = () => {
         <div
           style={{
             height: "4rem",
+            width: "100%",
+            position: "relative",
+            right: "0",
+            left: "-64px",
+            top: "-15px",
+            boxShadow: "1px 1px 9px -4px",
+            display: "flex",
+            alignItems: "center",
+            paddingLeft: "4rem",
           }}
         >
           {val.channelData.name}
-          <hr
-            style={{
-              border: "1px solid #828282",
-              borderRadius: "0.5rem",
-              width: "92%",
-              marginLeft: "0",
-              background: "#828282",
-            }}
-          />
         </div>
-
-        {chats.map((cht) => {
-          console.log(cht);
-          if (cht.id) {
-            const today = new Date();
-            const todayString = today.toLocaleString("en-US", {
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-            });
-            const yesterday = new Date(
-              today.getFullYear(),
-              today.getMonth(),
-              today.getDate() - 1
-            ).toLocaleString("en-US", {
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-            });
-            const msgDate = new Date(cht.chatData.createdAt).toLocaleString(
-              "en-US",
-              { month: "short", day: "numeric", year: "numeric" }
-            );
-            const msgTime = new Date(cht.chatData.createdAt).toLocaleString(
-              "en-US",
-              { hour: "numeric", minute: "numeric" }
-            );
-            var str = "";
-            if (todayString === msgDate) {
-              str = "Today at " + msgTime;
-            } else if (yesterday === msgDate) {
-              str = "YesterDay at " + msgTime;
-            } else {
-              str =
-                new Date(cht.chatData.createdAt).toLocaleString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                }) +
-                " at " +
-                msgTime;
-            }
-
+        {console.log(chats)}
+        {uniqueDates.map((date) => {
+          console.log(date);
+          if (date !== "Invalid Date") {
             return (
-              <Messages key={cht.id}>
-                {new Date(cht.chatData.createdAt) === new Date() ? (
-                  <DateLine />
-                ) : (
-                  ""
-                )}
+              <>
                 <div
                   style={{
-                    height: "42px",
-                    width: "42px",
-                    borderRadius: "0.5rem",
-                    marginRight: "1rem",
+                    textAlign: "center",
+                    fontSize: "12px",
+                    position: "relative",
+                    left: "-4%",
+                    marginTop: "2rem",
                   }}
                 >
-                  <img
-                    src={cht.chatData.imageUrl}
-                    alt="user profile"
-                    height={42}
-                    width={42}
+                  <hr
                     style={{
-                      borderRadius: "0.5rem",
+                      border: "none",
+                      background: "#828282",
+                      height: "1px",
                     }}
                   />
-                </div>
-                <div
-                  style={{
-                    fontSize: "1rem",
-                    fontWeight: "100",
-                  }}
-                >
                   <div
                     style={{
-                      fontSize: "1rem",
-                      fontWeight: "700",
-                      fontFamily: "Noto Sans",
-                      color: "#828282",
-                      marginBottom: "0.2rem",
-                      display: "flex",
-                      alignItems: "center",
+                      width: "10%",
+                      margin: "auto",
+                      background: " #252329",
+                      position: "relative",
+                      top: "-16px",
                     }}
                   >
-                    {userData.name
-                      ? userData.name
-                      : auth.currentUser?.displayName}
-                    <div
-                      style={{
-                        marginLeft: "1rem",
-                        fontSize: "12px",
-                        fontWeight: "500",
-                      }}
-                    >
-                      {str}
-                    </div>
+                    {date}
                   </div>
-                  {cht.chatData.chat}
                 </div>
-              </Messages>
+                {chats.map((cht) => {
+                  if (
+                    cht.id &&
+                    new Date(cht.chatData.createdAt).toLocaleString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    }) === date
+                  ) {
+                    const today = new Date();
+                    const todayString = today.toLocaleString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    });
+                    const yesterday = new Date(
+                      today.getFullYear(),
+                      today.getMonth(),
+                      today.getDate() - 1
+                    ).toLocaleString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    });
+                    const msgDate = new Date(
+                      cht.chatData.createdAt
+                    ).toLocaleString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    });
+                    const msgTime = new Date(
+                      cht.chatData.createdAt
+                    ).toLocaleString("en-US", {
+                      hour: "numeric",
+                      minute: "numeric",
+                    });
+                    var str = "";
+                    if (todayString === msgDate) {
+                      str = "Today at " + msgTime;
+                    } else if (yesterday === msgDate) {
+                      str = "YesterDay at " + msgTime;
+                    } else {
+                      str =
+                        new Date(cht.chatData.createdAt).toLocaleString(
+                          "en-US",
+                          {
+                            month: "short",
+                            day: "numeric",
+                          }
+                        ) +
+                        " at " +
+                        msgTime;
+                    }
+
+                    return (
+                      <Messages key={cht.id}>
+                        <div
+                          style={{
+                            height: "42px",
+                            width: "42px",
+                            borderRadius: "0.5rem",
+                            marginRight: "1rem",
+                          }}
+                        >
+                          <img
+                            src={cht.chatData.imageUrl}
+                            alt="user profile"
+                            height={42}
+                            width={42}
+                            style={{
+                              borderRadius: "0.5rem",
+                            }}
+                          />
+                        </div>
+                        <div
+                          style={{
+                            fontSize: "1rem",
+                            fontWeight: "400",
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontSize: "1rem",
+                              fontWeight: "700",
+                              fontFamily: "Noto Sans Display",
+                              color: "#828282",
+                              marginBottom: "0.2rem",
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            {userData.name
+                              ? userData.name
+                              : auth.currentUser?.displayName}
+                            <div
+                              style={{
+                                marginLeft: "1rem",
+                                fontSize: "12px",
+                                fontWeight: "500",
+                              }}
+                            >
+                              {str}
+                            </div>
+                          </div>
+                          {cht.chatData.chat}
+                        </div>
+                      </Messages>
+                    );
+                  }
+                  return <></>;
+                })}
+              </>
             );
           }
           return <></>;
         })}
+
         <div
           style={{
             position: "fixed",

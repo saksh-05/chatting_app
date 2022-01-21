@@ -3,8 +3,8 @@ import { auth } from "config/firebase-config";
 import { signOut } from "firebase/auth";
 // import { getDatabase, ref, onValue } from "firebase/database";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
-import { Channels, Chats, Profile, Dropdown, Add } from "./styled";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Channels, Chats, Profile, Dropdown, Add, Messages } from "./styled";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "redux/store";
 import { updateUser } from "redux/actions";
@@ -22,6 +22,11 @@ const Main = () => {
   const dispatch = useAppDispatch();
   const updatedUser = useSelector((state: RootState) => state.updateUserItem);
   const history = useNavigate();
+  const location = useLocation();
+  const val = location.state as any;
+  console.log(location);
+  console.log(val);
+
   const [showDropdown, setShowDropdown] = useState(false);
   const [showLoading, setShowLoading] = useState(true);
   const [showAddChannelScreen, setShowAddChannelScreen] = useState(false);
@@ -31,6 +36,15 @@ const Main = () => {
     bio: updatedUser.bio,
     phone: updatedUser.phone,
   });
+
+  const allDates = updatedUser.chats.map((cht) =>
+    new Date(cht.chatData.createdAt).toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    })
+  );
+  const uniqueDates = [...Array.from(new Set(allDates))];
   useEffect(() => {
     const getUserData = async () => {
       const db = getFirestore();
@@ -134,7 +148,9 @@ const Main = () => {
               top: "4rem",
             }}
           >
-            <AddChannel />
+            <AddChannel
+              handleAddChannel={() => setShowAddChannelScreen(false)}
+            />
           </div>
         </>
       ) : (
@@ -157,7 +173,7 @@ const Main = () => {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  paddingBottom: "0.5rem",
+                  paddingBottom: "0.1rem",
                   cursor: "pointer",
                 }}
                 onClick={() => setShowAddChannelScreen(true)}
@@ -244,45 +260,182 @@ const Main = () => {
             </Profile>
           </Channels>
           <Chats>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
-            <div>section a</div>
+            <div
+              style={{
+                height: "4rem",
+                width: "100%",
+                position: "relative",
+                right: "0",
+                left: "-64px",
+                top: "-15px",
+                boxShadow: "1px 1px 9px -4px",
+                display: "flex",
+                alignItems: "center",
+                paddingLeft: "4rem",
+              }}
+            >
+              {val}
+            </div>
+            {uniqueDates.map((date) => {
+              console.log(date);
+              if (date !== "Invalid Date") {
+                return (
+                  <>
+                    <div
+                      style={{
+                        textAlign: "center",
+                        fontSize: "12px",
+                        position: "relative",
+                        left: "-4%",
+                        marginTop: "2rem",
+                      }}
+                    >
+                      <hr
+                        style={{
+                          border: "none",
+                          background: "#828282",
+                          height: "1px",
+                        }}
+                      />
+                      <div
+                        style={{
+                          width: "10%",
+                          margin: "auto",
+                          background: " #252329",
+                          position: "relative",
+                          top: "-16px",
+                        }}
+                      >
+                        {date}
+                      </div>
+                    </div>
+                    {updatedUser.chats.map((cht) => {
+                      if (
+                        cht.id &&
+                        new Date(cht.chatData.createdAt).toLocaleString(
+                          "en-US",
+                          {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          }
+                        ) === date
+                      ) {
+                        const today = new Date();
+                        const todayString = today.toLocaleString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        });
+                        const yesterday = new Date(
+                          today.getFullYear(),
+                          today.getMonth(),
+                          today.getDate() - 1
+                        ).toLocaleString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        });
+                        const msgDate = new Date(
+                          cht.chatData.createdAt
+                        ).toLocaleString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        });
+                        const msgTime = new Date(
+                          cht.chatData.createdAt
+                        ).toLocaleString("en-US", {
+                          hour: "numeric",
+                          minute: "numeric",
+                        });
+                        var str = "";
+                        if (todayString === msgDate) {
+                          str = "Today at " + msgTime;
+                        } else if (yesterday === msgDate) {
+                          str = "YesterDay at " + msgTime;
+                        } else {
+                          str =
+                            new Date(cht.chatData.createdAt).toLocaleString(
+                              "en-US",
+                              {
+                                month: "short",
+                                day: "numeric",
+                              }
+                            ) +
+                            " at " +
+                            msgTime;
+                        }
+
+                        return (
+                          <Messages key={cht.id}>
+                            <div
+                              style={{
+                                height: "42px",
+                                width: "42px",
+                                borderRadius: "0.5rem",
+                                marginRight: "1rem",
+                              }}
+                            >
+                              <img
+                                src={cht.chatData.imageUrl}
+                                alt="user profile"
+                                height={42}
+                                width={42}
+                                style={{
+                                  borderRadius: "0.5rem",
+                                }}
+                              />
+                            </div>
+                            <div
+                              style={{
+                                fontSize: "1rem",
+                                fontWeight: "400",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  fontSize: "1rem",
+                                  fontWeight: "700",
+                                  fontFamily: "Noto Sans Display",
+                                  color: "#828282",
+                                  marginBottom: "0.2rem",
+                                  display: "flex",
+                                  alignItems: "center",
+                                }}
+                              >
+                                {userData.name
+                                  ? userData.name
+                                  : auth.currentUser?.displayName}
+                                <div
+                                  style={{
+                                    marginLeft: "1rem",
+                                    fontSize: "12px",
+                                    fontWeight: "500",
+                                  }}
+                                >
+                                  {str}
+                                </div>
+                              </div>
+                              {cht.chatData.chat}
+                            </div>
+                          </Messages>
+                        );
+                      }
+                      return <></>;
+                    })}
+                  </>
+                );
+              }
+              return <></>;
+            })}
+            <div
+              style={{
+                position: "fixed",
+                bottom: "10px",
+                width: "100%",
+              }}
+            ></div>
           </Chats>
         </>
       )}
