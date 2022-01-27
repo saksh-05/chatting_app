@@ -9,6 +9,10 @@ export const Navbar = styled.div`
   padding-right: 7rem;
   box-shadow: 0px 0px 8px 0px;
   height: 5rem;
+
+  @media (max-width: 600px) {
+    padding: 0 1rem;
+  }
 `;
 
 export const Dropdown = styled.div`
@@ -39,6 +43,9 @@ export const Dropdown = styled.div`
     &:hover {
       background: #3c393f;
     }
+  }
+  @media (max-width: 600px) {
+    right: 1rem;
   }
 `;
 
@@ -71,6 +78,10 @@ export const Container = styled.div`
     height: 2rem;
     padding-top: 0.5rem;
   }
+
+  @media (max-width: 600px) {
+    width: 75%;
+  }
 `;
 
 export const Back = styled.div`
@@ -80,4 +91,8 @@ export const Back = styled.div`
   display: flex;
   align-items: center;
   margin-top: 2rem;
+  cursor: pointer;
+  @media (max-width: 600px) {
+    width: 93%;
+  }
 `;

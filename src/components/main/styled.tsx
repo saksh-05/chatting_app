@@ -6,13 +6,22 @@ export const Channels = styled.div`
   height: 100%;
   width: 25%;
   position: fixed;
+
+  @media (max-width: 600px) {
+    z-index: 1;
+    width: 85%;
+  }
 `;
 
 export const Chats = styled.div`
   color: white;
-  width: 70%;
+  width: 75%;
   position: relative;
   margin-left: auto;
+
+  @media (max-width: 600px) {
+    width: 100%;
+  }
 `;
 
 export const Profile = styled.div`
@@ -65,7 +74,85 @@ export const Add = styled.div`
   justify-content: space-between;
 `;
 
+export const DateLine = styled.div`
+  text-align: center;
+  font-size: 12px;
+  margin: auto;
+  margin-top: 2rem;
+  width: 95%;
+
+  @media (max-width: 600px) {
+    left: 0%;
+  }
+  div {
+    width: 10%;
+    margin: auto;
+    background: #252329;
+    position: relative;
+    top: -16px;
+
+    @media (max-width: 600px) {
+      width: 20%;
+    }
+  }
+`;
+
 export const Messages = styled.div`
   display: flex;
   margin-bottom: 1.5rem;
+  padding-left: 4rem;
+  @media (max-width: 600px) {
+    padding-left: 1rem;
+  }
+`;
+
+export const MobileView = styled.div`
+  @media (min-width: 601px) {
+    display: none;
+  }
+`;
+
+export const DeskView = styled.div`
+  @media (max-width: 600px) {
+    display: none;
+  }
+`;
+
+export const MobileNavbar = styled.div`
+  position: sticky;
+  z-index: 21;
+  background: #333333;
+  width: 93%;
+  box-shadow: 5px 3px 8px -2px black;
+  padding-left: 4rem;
+  @media (max-width: 600px) {
+    display: flex;
+    box-shadow: 1px 1px 7px 0px;
+    align-items: center;
+    padding: 0 1rem;
+    position: sticky;
+    top: 0;
+  }
+`;
+
+export const HamburgerMenu = styled.div`
+  height: 23px;
+
+  @media (min-width: 601px) {
+    display: none;
+  }
+`;
+
+export const DeskBar = styled.div`
+  height: 4rem;
+  display: flex;
+  align-items: center;
+  font-size: 1.3rem;
+  font-weight: 600;
+
+  @media (max-width: 600px) {
+    box-shadow: none;
+    left: 0;
+    padding-left: 1rem;
+  }
 `;

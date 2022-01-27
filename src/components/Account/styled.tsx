@@ -10,6 +10,10 @@ export const Navbar = styled.div`
   padding-right: 7rem;
   box-shadow: 0px 0px 8px 0px;
   height: 5rem;
+
+  @media (max-width: 600px) {
+    padding: 0 1rem;
+  }
 `;
 
 export const Profile = styled.div`
@@ -17,6 +21,11 @@ export const Profile = styled.div`
   margin: auto;
   margin-top: 2rem;
   margin-bottom: 4rem;
+
+  @media (max-width: 600px) {
+    width: 90%;
+    margin: auto;
+  }
 `;
 
 export const Userdetail = styled.table`
@@ -43,6 +52,10 @@ export const Specialdiv = styled.div`
   height: 80px;
   display: flex;
   align-items: center;
+
+  @media (max-width: 600px) {
+    left: 4rem;
+  }
 `;
 
 export const Dropdown = styled.div`
@@ -73,5 +86,9 @@ export const Dropdown = styled.div`
     &:hover {
       background: #3c393f;
     }
+  }
+
+  @media (max-width: 600px) {
+    right: 1rem;
   }
 `;

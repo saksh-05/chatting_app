@@ -5,7 +5,6 @@ import {
   AuthProvider,
   GithubAuthProvider,
   FacebookAuthProvider,
-  // signOut,
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { FirebaseError } from "firebase/app";
@@ -82,15 +81,10 @@ const Login = () => {
           if (error) {
             setSnackbar(err.code.split("/")[1]);
             console.log("error", err.code);
-            console.log(snackbar);
           }
         });
     }
   };
-  // const handleSignOut = async () => {
-  //   console.log(auth.currentUser);
-  //   await signOut(auth);
-  // };
 
   return (
     <>
@@ -186,9 +180,6 @@ const Login = () => {
           </Link>
         </p>
       </SignIn>
-
-      {/* {auth.currentUser?.email}
-      <button onClick={handleSignOut}>SingOut</button> */}
     </>
   );
 };

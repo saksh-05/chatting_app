@@ -11,6 +11,9 @@ export const Register = styled.div`
   color: white;
   font-family: "Quicksand";
   border-radius: 0.5rem;
+  @media (max-width: 600px) {
+    width: 70%;
+  }
 
   input {
     height: 3rem;

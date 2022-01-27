@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Container, ChannelName, Initials } from "./styled";
 import {
-  getDocs,
   collection,
   getFirestore,
   orderBy,
   query,
   onSnapshot,
 } from "firebase/firestore";
-import { useAppDispatch } from "redux/store";
-import { updateChannels } from "redux/actions";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import LoadingScreen from "components/LoadingScreen";
 
 const AllChannels = () => {
@@ -29,6 +26,7 @@ const AllChannels = () => {
   useEffect(() => {
     const getAllChannels = async () => {
       const db = getFirestore();
+      setShowLoadingScreen(true);
       await onSnapshot(
         query(collection(db, "channels"), orderBy("createdAt")),
         (onSnap) => {
@@ -48,19 +46,13 @@ const AllChannels = () => {
           });
         }
       );
+      setShowLoadingScreen(false);
     };
-    //   dispatch(
-    //     updateChannels({
-    //       channels,
-    //     })
-    //   );
-
     getAllChannels();
   }, []);
   return (
     <Container>
       {showLoadingScreen ? <LoadingScreen /> : <></>}
-      {console.log(channels)}
       {channels.map((doc) => {
         if (doc.id) {
           const intArr = doc.channelData.name.split(" ");
@@ -68,12 +60,10 @@ const AllChannels = () => {
           for (let i = 0; i < Math.min(intArr.length, 2); i++) {
             element += intArr[i][0];
           }
-          console.log(intArr);
           return (
             <ChannelName
               key={doc.id}
               onClick={async () => {
-                // return <Navigate to="/channelDetail" />;
                 await history("/channelDetail", {
                   state: doc,
                 });
@@ -84,7 +74,7 @@ const AllChannels = () => {
             </ChannelName>
           );
         }
-        return <></>;
+        return "";
       })}
     </Container>
   );

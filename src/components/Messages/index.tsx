@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { ChatMessage } from "./styled";
 import send from "../../resources/send.svg";
 import { getFirestore, collection, addDoc } from "firebase/firestore";
@@ -7,12 +7,10 @@ import { useSelector } from "react-redux";
 import { RootState } from "redux/reducers";
 
 const UserMessages = (props: any) => {
-  console.log(props);
   const updatedUser = useSelector((state: RootState) => state.updateUserItem);
   const { id } = props;
   const [message, setMessage] = useState("");
   const uid = auth.currentUser?.uid;
-  console.log(message);
   const handleSubmit = async () => {
     try {
       const db = getFirestore();
@@ -30,16 +28,13 @@ const UserMessages = (props: any) => {
           }`,
         }
       );
-      console.log(messageRef);
       setMessage("");
-      console.log("completed");
     } catch (err) {
       console.log(err);
     }
   };
   return (
     <ChatMessage>
-      {/* <input type="text" maxLength={180} /> */}
       <textarea
         name="message"
         rows={3}
@@ -50,18 +45,7 @@ const UserMessages = (props: any) => {
         value={message}
         onChange={(e) => setMessage(e.target.value)}
       ></textarea>
-      <div
-        style={{
-          height: "32px",
-          width: "32px",
-          background: "#2F80ED",
-          borderRadius: "0.5rem",
-          alignItems: "center",
-          justifyContent: "center",
-          display: "flex",
-          cursor: "pointer",
-        }}
-      >
+      <div>
         <img src={send} alt="send message" onClick={handleSubmit} />
       </div>
     </ChatMessage>

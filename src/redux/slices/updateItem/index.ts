@@ -13,6 +13,7 @@ interface UpdateUserItem {
       imageUrl: string;
       chat: string;
       createdAt: string;
+      name: string;
     };
   }[];
 }
@@ -31,6 +32,7 @@ const initialState: UpdateUserItem = {
         imageUrl: "",
         chat: "",
         createdAt: "",
+        name: "",
       },
     },
   ],
@@ -41,17 +43,15 @@ const updateUserSlice = createSlice({
   reducers: {
     updateUser: (state, action) => {
       const acp = action.payload;
-      console.log("acp", acp);
-      state.name = action.payload.name;
-      state.bio = action.payload.bio;
-      state.phone = action.payload.phone;
-      state.photo = action.payload.imageUrl;
+      state.name = acp.name;
+      state.bio = acp.bio;
+      state.phone = acp.phone;
+      state.photo = acp.imageUrl;
     },
     updateChannels: (state, action) => {
-      console.log("updateChannels", action.payload);
       const acp = action.payload;
-      if (action.payload.id) {
-        if (action.payload.channelId === state.channelId) {
+      if (acp.id) {
+        if (acp.channelId === state.channelId) {
           return {
             ...state,
             chats: [
@@ -63,6 +63,7 @@ const updateUserSlice = createSlice({
                   imageUrl: acp.chatData.imageUrl,
                   chat: acp.chatData.chat,
                   createdAt: acp.chatData.createdAt,
+                  name: acp.chatData.name,
                 },
               },
             ],
@@ -79,6 +80,7 @@ const updateUserSlice = createSlice({
                   imageUrl: acp.chatData.imageUrl,
                   chat: acp.chatData.chat,
                   createdAt: acp.chatData.createdAt,
+                  name: acp.chatData.name,
                 },
               },
             ],

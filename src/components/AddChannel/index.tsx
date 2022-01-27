@@ -1,12 +1,9 @@
 import React, { useState } from "react";
 import { Container, Button } from "./styled";
-import { useNavigate } from "react-router-dom";
-// import { set, ref, getDatabase } from "firebase/database";
 import { collection, getFirestore, addDoc } from "firebase/firestore";
 import LoadingScreen from "components/LoadingScreen";
 
 const AddChannel = ({ handleAddChannel }: any) => {
-  const history = useNavigate();
   const [channel, setChannel] = useState({
     name: "",
     description: "",

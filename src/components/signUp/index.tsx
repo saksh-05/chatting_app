@@ -103,7 +103,6 @@ const Signup = () => {
         if (error) {
           setSnackbar(err.code.split("/")[1]);
           console.log("error", err.code);
-          console.log(snackbar);
         }
       }
     }

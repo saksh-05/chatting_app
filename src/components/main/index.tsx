@@ -1,35 +1,37 @@
 import React, { useState, useEffect } from "react";
 import { auth } from "config/firebase-config";
-import { signOut } from "firebase/auth";
-// import { getDatabase, ref, onValue } from "firebase/database";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Channels, Chats, Profile, Dropdown, Add, Messages } from "./styled";
+import { useLocation } from "react-router-dom";
+import {
+  Chats,
+  Messages,
+  MobileView,
+  HamburgerMenu,
+  DeskView,
+  MobileNavbar,
+  DeskBar,
+  DateLine,
+} from "./styled";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "redux/store";
 import { updateUser } from "redux/actions";
 import { RootState } from "redux/reducers";
-import arrow from "../../resources/arrow.svg";
-import account from "../../resources/account.svg";
-import signout from "../../resources/signout.svg";
-import chat from "../../resources/chat.svg";
-import profile from "../../resources/profile.svg";
 import LoadingScreen from "components/LoadingScreen";
 import AddChannel from "components/AddChannel";
-import AllChannels from "components/AllChannels";
+import Menu from "components/Menu";
+import hamburger from "../../resources/hamburger.svg";
 
 const Main = () => {
   const dispatch = useAppDispatch();
   const updatedUser = useSelector((state: RootState) => state.updateUserItem);
-  const history = useNavigate();
   const location = useLocation();
   const val = location.state as any;
   console.log(location);
   console.log(val);
 
-  const [showDropdown, setShowDropdown] = useState(false);
   const [showLoading, setShowLoading] = useState(true);
   const [showAddChannelScreen, setShowAddChannelScreen] = useState(false);
+  const [showView, setShowView] = useState(false);
   const [userData, setUserData] = useState({
     imageUrl: updatedUser.photo,
     name: updatedUser.name,
@@ -49,10 +51,8 @@ const Main = () => {
     const getUserData = async () => {
       const db = getFirestore();
       const userId = auth.currentUser?.uid;
-      // console.log(userId);
       try {
         const userSnap = await getDoc(doc(db, "users", `${userId}`));
-        console.log(userSnap);
         if (userSnap.exists()) {
           setUserData({
             imageUrl: userSnap.data().photo,
@@ -69,61 +69,14 @@ const Main = () => {
             })
           );
         }
-        // userSnap.forEach((doc) => {
-        //   console.log(doc.id);
-        //   if (doc.id === userId) {
-        //     setUserData({
-        //       imageUrl: doc.data().photo,
-        //       name: doc.data().name,
-        //       bio: doc.data().bio,
-        //       phone: doc.data().phone,
-        //     });
-        //     dispatch(
-        //       updateUser({
-        //         imageUrl: doc.data().photo,
-        //         name: doc.data().name,
-        //         bio: doc.data().bio,
-        //         phone: doc.data().phone,
-        //       })
-        //     );
-        //   }
-        //   console.log(updatedUser);
-        // });
-        setShowLoading(false);
 
-        // console.log(userSnap);
+        setShowLoading(false);
       } catch (err) {
         console.log(err);
       }
-      // await onValue(ref(db, "users/" + userId), (snap) => {
-      //   console.log(snap.val());
-      //   const val = snap.val();
-      //   if (val != null) {
-      //     setUserData({
-      //       imageUrl: val.photo,
-      //       name: val.name,
-      //       bio: val.bio,
-      //       phone: val.phone,
-      //     });
-      //     dispatch(
-      //       updateUser({
-      //         imageUrl: val.photo,
-      //         name: val.name,
-      //         bio: val.bio,
-      //         phone: val.phone,
-      //       })
-      //     );
-      //     console.log(updatedUser);
-      //   }
-      //   setShowLoading(false);
-      // });
     };
-    // const getAllChannels = async () => {
-    //   const db = getDatabase();
-    //   const channelsRef = doc(db, "channels");
-    // };
+
     getUserData();
-    // getAllChannels();
   }, []);
   return (
     <div>
@@ -158,138 +111,53 @@ const Main = () => {
       )}
       {showLoading ? (
         <LoadingScreen />
+      ) : showView ? (
+        <MobileView>
+          <Menu />
+          <div
+            style={{
+              zIndex: "1",
+              width: "10%",
+              fontSize: "1.7rem",
+              color: "white",
+              position: "fixed",
+              left: "auto",
+              right: "12px",
+              top: "10px",
+              background: "#120F13",
+              borderRadius: "0.5rem",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontWeight: "100",
+            }}
+            onClick={() => setShowView(!showView)}
+          >
+            X
+          </div>
+        </MobileView>
       ) : (
         <>
-          <Channels>
-            <Add>
-              <h3>Channels</h3>
-              <div
-                style={{
-                  background: "#252329",
-                  borderRadius: "0.5rem",
-                  width: "2rem",
-                  height: "2rem",
-                  fontSize: "2rem",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  paddingBottom: "0.1rem",
-                  cursor: "pointer",
-                }}
-                onClick={() => setShowAddChannelScreen(true)}
-              >
-                +
-              </div>
-            </Add>
-            <AllChannels />
-            {showDropdown ? (
-              <Dropdown>
-                <ul>
-                  <li onClick={() => history("/profile")}>
-                    <img
-                      src={account}
-                      alt="profile"
-                      style={{ marginRight: "1rem" }}
-                    />
-                    Profile
-                  </li>
-                  <li>
-                    <img
-                      src={chat}
-                      alt="group chat"
-                      style={{ marginRight: "1rem" }}
-                    />
-                    Channels
-                  </li>
-                  <hr></hr>
-                  <li
-                    style={{ color: "#EB5757" }}
-                    onClick={async () => {
-                      setUserData({
-                        name: "",
-                        bio: "",
-                        phone: 0,
-                        imageUrl: "",
-                      });
-                      dispatch(
-                        updateUser({
-                          userData,
-                        })
-                      );
-                      await signOut(auth);
-                      history("/");
-                    }}
-                  >
-                    <img
-                      src={signout}
-                      alt="exit to app"
-                      style={{ marginRight: "1rem" }}
-                    />
-                    SignOut
-                  </li>
-                </ul>
-              </Dropdown>
-            ) : (
-              <></>
-            )}
-            <Profile>
-              <div style={{ alignItems: "center", display: "flex" }}>
-                <img
-                  src={
-                    userData.imageUrl
-                      ? userData.imageUrl
-                      : auth.currentUser?.photoURL == null
-                      ? profile
-                      : auth.currentUser?.photoURL
-                  }
-                  alt="profile"
-                  style={{
-                    height: "48px",
-                    width: "48px",
-                    borderRadius: "0.5rem",
-                  }}
-                />
-              </div>
-              {auth.currentUser?.displayName}
-              <div
-                style={{ display: "flex", cursor: "pointer" }}
-                onClick={() => setShowDropdown(!showDropdown)}
-              >
-                <img src={arrow} alt="arrow" />
-              </div>
-            </Profile>
-          </Channels>
+          <DeskView>
+            <Menu />
+          </DeskView>
           <Chats>
-            <div
-              style={{
-                height: "4rem",
-                width: "100%",
-                position: "relative",
-                right: "0",
-                left: "-64px",
-                top: "-15px",
-                boxShadow: "1px 1px 9px -4px",
-                display: "flex",
-                alignItems: "center",
-                paddingLeft: "4rem",
-              }}
-            >
-              {val}
-            </div>
+            <MobileNavbar>
+              <HamburgerMenu>
+                <img
+                  src={hamburger}
+                  alt="menu"
+                  onClick={() => setShowView(!showView)}
+                />
+              </HamburgerMenu>
+              <DeskBar>{val}</DeskBar>
+            </MobileNavbar>
+
             {uniqueDates.map((date) => {
-              console.log(date);
               if (date !== "Invalid Date") {
                 return (
                   <>
-                    <div
-                      style={{
-                        textAlign: "center",
-                        fontSize: "12px",
-                        position: "relative",
-                        left: "-4%",
-                        marginTop: "2rem",
-                      }}
-                    >
+                    <DateLine>
                       <hr
                         style={{
                           border: "none",
@@ -297,18 +165,8 @@ const Main = () => {
                           height: "1px",
                         }}
                       />
-                      <div
-                        style={{
-                          width: "10%",
-                          margin: "auto",
-                          background: " #252329",
-                          position: "relative",
-                          top: "-16px",
-                        }}
-                      >
-                        {date}
-                      </div>
-                    </div>
+                      <div>{date}</div>
+                    </DateLine>
                     {updatedUser.chats.map((cht) => {
                       if (
                         cht.id &&
@@ -404,9 +262,7 @@ const Main = () => {
                                   alignItems: "center",
                                 }}
                               >
-                                {userData.name
-                                  ? userData.name
-                                  : auth.currentUser?.displayName}
+                                {cht.chatData.name}
                                 <div
                                   style={{
                                     marginLeft: "1rem",
@@ -427,7 +283,7 @@ const Main = () => {
                   </>
                 );
               }
-              return <></>;
+              return "";
             })}
             <div
               style={{

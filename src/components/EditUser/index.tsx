@@ -4,7 +4,6 @@ import { Container, Back, Dropdown, Navbar } from "./styled";
 import { useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { auth } from "config/firebase-config";
-// import { set, ref, getDatabase } from "firebase/database";
 import devChallenge from "../../resources/devchallenges-light.svg";
 import arrow from "../../resources/arrow.svg";
 import backarrow from "../../resources/back-arrow.svg";
@@ -39,9 +38,6 @@ const EditUser = () => {
     phone: Yup.number(),
     password: Yup.string().max(15, "Too Long"),
   });
-  // const [formValue,setFormValue]=useState({
-  //   name:{auth.currentUser?.displayName},
-  // })
 
   return (
     <div style={{ color: "#fff" }}>
@@ -139,7 +135,7 @@ const EditUser = () => {
               </div>
             </div>
           </Navbar>
-          <Back>
+          <Back onClick={() => history("/profile")}>
             <img src={backarrow} alt="back arrow" />
             <h5>Back</h5>
           </Back>
@@ -186,18 +182,6 @@ const EditUser = () => {
                 } catch (error) {
                   console.log(error);
                 }
-                // try {
-                //   const userSnap = await getDocs(collection(db, "users"));
-                //   userSnap.forEach((dt) => console.log(dt.data()));
-                //   // console.log(userSnap);
-                // } catch (err) {
-                //   console.log(err);
-                // }
-                // .then(() => {
-                //   console.log("post complete");
-                //   history("/profile");
-                // })
-                // .catch((err) => console.log(err));
                 setShowLoading(false);
                 action.setSubmitting(false);
               }}
