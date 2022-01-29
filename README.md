@@ -1,3 +1,21 @@
+# Dev Chatting App
+
+## Features
+This is a chatting web app.
+- Using this app users can send messages to others and stay connected with like-minded people. 
+- Users can add new groups. 
+- Users can see their previous chats and can connect to any no of channels they like.
+
+### [Demo](https://dev-shopping-app.netlify.app/)
+
+## Tech Stack
+- ReactJs
+- Redux
+- Typescript
+- Firebase( for database and backend services)
+- Styled-component (for Styling)
+- Netlify ( for deployment)
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) template.
 
 ## Available Scripts
