@@ -33,7 +33,6 @@ const Main = () => {
   console.log(val);
 
   const [showLoading, setShowLoading] = useState(true);
-  // const [showAddChannelScreen, setShowAddChannelScreen] = useState(false);
   const [showView, setShowView] = useState(false);
   const [userData, setUserData] = useState({
     imageUrl: updatedUser.photo,
