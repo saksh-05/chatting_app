@@ -6,7 +6,7 @@ This is a chatting web app.
 - Users can add new groups. 
 - Users can see their previous chats and can connect to any no of channels they like.
 
-### [Demo](https://dev-shopping-app.netlify.app/)
+### [Demo](https://chatting-dev-app.netlify.app/)
 
 ## Tech Stack
 - ReactJs
