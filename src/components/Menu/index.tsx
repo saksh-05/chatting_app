@@ -10,7 +10,7 @@ import profile from "../../resources/profile.svg";
 import { useAppDispatch } from "redux/store";
 import { useSelector } from "react-redux";
 import { RootState } from "redux/reducers";
-import { updateUser } from "redux/actions";
+import { updateUser, showChannel } from "redux/actions";
 import { Channels, Add, Dropdown, Profile } from "./styled";
 import AllChannels from "components/AllChannels";
 
@@ -45,7 +45,13 @@ const DateLine = () => {
             paddingBottom: "0.1rem",
             cursor: "pointer",
           }}
-          onClick={() => setShowAddChannelScreen(true)}
+          onClick={() =>
+            dispatch(
+              showChannel({
+                show: true,
+              })
+            )
+          }
         >
           +
         </div>

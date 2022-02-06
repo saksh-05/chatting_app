@@ -14,7 +14,7 @@ import {
 } from "./styled";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "redux/store";
-import { updateUser } from "redux/actions";
+import { updateUser, showChannel } from "redux/actions";
 import { RootState } from "redux/reducers";
 import LoadingScreen from "components/LoadingScreen";
 import AddChannel from "components/AddChannel";
@@ -24,13 +24,16 @@ import hamburger from "../../resources/hamburger.svg";
 const Main = () => {
   const dispatch = useAppDispatch();
   const updatedUser = useSelector((state: RootState) => state.updateUserItem);
+  const showAddChannelScreen = useSelector(
+    (state: RootState) => state.addChannel.showAddChannelScreen
+  );
   const location = useLocation();
   const val = location.state as any;
   console.log(location);
   console.log(val);
 
   const [showLoading, setShowLoading] = useState(true);
-  const [showAddChannelScreen, setShowAddChannelScreen] = useState(false);
+  // const [showAddChannelScreen, setShowAddChannelScreen] = useState(false);
   const [showView, setShowView] = useState(false);
   const [userData, setUserData] = useState({
     imageUrl: updatedUser.photo,
@@ -47,6 +50,7 @@ const Main = () => {
     })
   );
   const uniqueDates = [...Array.from(new Set(allDates))];
+
   useEffect(() => {
     const getUserData = async () => {
       const db = getFirestore();
@@ -91,7 +95,13 @@ const Main = () => {
               zIndex: "1",
               width: "100%",
             }}
-            onClick={() => setShowAddChannelScreen(false)}
+            onClick={() =>
+              dispatch(
+                showChannel({
+                  show: false,
+                })
+              )
+            }
           ></div>
           <div
             style={{
@@ -102,7 +112,13 @@ const Main = () => {
             }}
           >
             <AddChannel
-              handleAddChannel={() => setShowAddChannelScreen(false)}
+              handleAddChannel={() =>
+                dispatch(
+                  showChannel({
+                    show: false,
+                  })
+                )
+              }
             />
           </div>
         </>
