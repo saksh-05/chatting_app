@@ -20,7 +20,6 @@ const DateLine = () => {
   const updatedUser = useSelector((state: RootState) => state.updateUserItem);
 
   const [showDropdown, setShowDropdown] = useState(false);
-  const [showAddChannelScreen, setShowAddChannelScreen] = useState(false);
   const [userData, setUserData] = useState({
     imageUrl: updatedUser.photo,
     name: updatedUser.name,
